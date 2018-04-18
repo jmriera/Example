@@ -1,0 +1,33 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set curr_calendar = get_system_calendar_context() %}
+
+<style>
+    #sprite {
+        background: url("{{ asset('bundles/oroworkflow/images/workflow-sprite.png') }}") no-repeat 50% -8px;
+        background-position: 50% -24px;
+        width:100%;
+        display: block;
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        height: 4px;
+
+    }
+    .switch-calendar, .switch-calendar:hover {
+        color: #2f8206;
+    }
+
+</style>
+
+<div class="dropdown dropdown-calendar pull-right"  style="display: inline-block;max-width: 1247px;padding: 7px 10px 0 10px;margin-right: 10px;">
+        {{ UI.link({
+            'path': path('oro_system_calendar_index'),
+            'class': 'switch-calendar',
+            'iCss': 'fa-calendar-check-o blackiconcolor',
+            'title' : 'elemen.calendar.system.action.switch_working_calendar'|trans,
+            'label' :  curr_calendar.name,
+
+        }) }}
+        <span id="sprite"></span>
+</div>
+

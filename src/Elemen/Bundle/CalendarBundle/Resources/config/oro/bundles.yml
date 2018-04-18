@@ -1,0 +1,2 @@
+bundles:
+    - { name: Elemen\Bundle\CalendarBundle\ElemenCalendarBundle, priority: 100 }

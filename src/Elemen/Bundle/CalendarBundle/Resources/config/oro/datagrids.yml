@@ -1,0 +1,369 @@
+datagrids:
+    elemen-system-calendar-grid:
+        extends: system-calendar-grid
+        source:
+            query:
+                select:
+                    - sc.start_date
+                    - sc.end_date
+                    - IDENTITY(sc.type) as type
+        columns:
+            name:
+                type: twig
+                frontend_type: html
+                template: ElemenCalendarBundle:SystemCalendar:Datagrid/Property/name.html.twig
+            start_date:
+                label: elemen.calendar.school_calendar.startDate.label
+                type: field
+                frontend_type: date
+            end_date:
+                label: elemen.calendar.school_calendar.endDate.label
+                type: field
+                frontend_type: date
+            type:
+                context:
+                    enum_code: calendar_types
+                type: twig
+                frontend_type: html
+                template: ElemenCalendarBundle:SystemCalendar:Datagrid/Property/type.html.twig
+                label: elemen.calendar.school_calendar.type.label
+        sorters:
+            columns:
+                type:
+                    data_name: calendarType
+            default:
+                name: ASC
+        filters:
+            columns:
+                type:
+                    type: enum
+                    enum_code: calendar_types
+                    data_name: type
+        options:
+            entity_pagination: true
+            mass_actions:
+                delete:
+                    enabled: false
+        properties:
+            id: ~
+            activate_link:
+                type:       url
+                route:      elemen_system_calendar_switch
+                params:     [ id ]
+        actions:
+            activate:
+                type:          dialog
+                acl_resource:  elemen_school_calendar_switch
+                label:         elemen.calendar.system.action.select_calendar
+                icon:          check
+                link:          activate_link
+                widgetOptions:
+                    options:
+                        dialogOptions:
+                            title:         "@translator->trans('elemen.calendar.system.action.switch_working_calendar')"
+                            allowMaximize: false
+                            allowMinimize: false
+                            modal:         true
+                            maximizedHeightDecreaseBy: minimize-bar
+                            width: 550
+        action_configuration: ["@elemen_calendar.datagrid.action_permission_provider", "getSwitchCalendarPermission"]
+
+
+    calendar-term-grid:
+        extended_entity_name: ElemenCalendarBundle:Term
+        source:
+            type: orm
+            query:
+                select:
+                    - t.id
+                    - t.name
+                    - t.shortName
+                    - t.division
+                    - t.firstDay
+                    - t.lastDay
+                from:
+                    - { table: ElemenCalendarBundle:Term, alias: t }
+                orderBy:
+                    - { column: t.division, dir: asc }
+                    - { column: t.firstDay, dir: asc }
+                    - { column: t.shortName, dir: asc }
+        columns:
+            name:
+                label: elemen.calendar.term.name.label
+            shortName:
+                label: elemen.calendar.term.short_name.label
+            division:
+                label: elemen.calendar.term.division.label
+                type: twig
+                template: ElemenCalendarBundle:Term:Datagrid/Property/division.html.twig
+                frontend_type: html
+            firstDay:
+                label: elemen.calendar.term.first_day.label
+                type: field
+                frontend_type: date
+            lastDay:
+                label: elemen.calendar.term.last_day.label
+                type: field
+                frontend_type: date
+        sorters:
+            default:
+                name: ASC
+
+    system-calendar-terms-grid:
+        extends: calendar-term-grid
+        source:
+            query:
+                where:
+                    and: [ t.systemCalendar = :systemCalendarId ]
+            bind_parameters: [ systemCalendarId ]
+        properties:
+            id: ~
+            update_link:
+                type:       url
+                route:      elemen_term_update
+                params:     [ id ]
+            delete_link:  { type: url, route:  oro_rest_api_delete, direct_params: { entity: calendarterms }, params: {id: id} }
+        actions:
+            update:
+                type:          dialog
+                acl_resource:  elemen_term_update
+                label:         oro.grid.action.update
+                icon:          edit
+                link:          update_link
+                widgetOptions:
+                    reload-grid-name: system-calendar-terms-grid
+                    options:
+                        dialogOptions:
+                            title:         "@translator->trans('elemen.calendar.term.action.add.label')"
+                            allowMaximize: false
+                            allowMinimize: false
+                            modal:         true
+                            maximizedHeightDecreaseBy: minimize-bar
+                            width: 550
+
+            delete:
+                type:          delete
+                acl_resource:  elemen_task_delete
+                label:         oro.grid.action.delete
+                icon:          trash
+                link:          delete_link
+
+    bell-schedule-grid:
+        extended_entity_name: ElemenCalendarBundle:BellSchedule
+        source:
+            type: orm
+            query:
+                select:
+                    - bs.id
+                    - bs.name
+                    - COUNT(tt.id) as timetables
+                from:
+                    - { table: ElemenCalendarBundle:BellSchedule, alias: bs }
+                join:
+                    left:
+                        - { join: bs.timetables, alias: tt }
+        columns:
+            name:
+                label: elemen.calendar.bell_schedule.name.label
+            timetables:
+                label: elemen.calendar.timetable.entity_plural_label
+                frontend_type: integer
+        properties:
+            id: ~
+            update_link:
+                type:       url
+                route:      elemen_bell_schedule_update
+                params:     [ id ]
+            delete_link:  { type: url, route:  oro_rest_api_delete, direct_params: { entity: bellschedules }, params: {id: id} }
+
+        actions:
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          pencil-square-o
+                acl_resource:  elemen_bell_schedule_update
+                rowAction:     true
+            delete:
+                type:          delete
+                acl_resource:  elemen_bellschedule_delete
+                label:         oro.grid.action.delete
+                icon:          trash
+                link:          delete_link
+
+    calendar-config-grid:
+        extended_entity_name: 'Elemen\Bundle\CalendarBundle\Entity\CalendarConfig'
+        options:
+            mass_actions:
+                delete:
+                    enabled: false
+            entityHint: CalendarConfig
+            entity_pagination: true
+            toolbarOptions:
+                pageSize:
+                    default_per_page: 50
+        acl_resource: 'elemen_calendar_config_view'
+        source:
+            type: orm
+            query:
+                select:
+                    - cc.id
+                    - cc.date
+                    - cd.id as cycleDayId
+                    - cd.name as cycleDay
+                    - bs.id as bellScheduleId
+                    - bs.name as bellSchedule
+                    - cc.inSession
+                    - cc.attendanceValue
+                    - tod.id as typeOfDayId
+                    - tod.name as typeOfDay
+                    - cc.note
+                    - CONCAT(MONTH(cc.date), ' / ', YEAR(cc.date)) as monthPeriod
+                from:
+                    - { table: ElemenCalendarBundle:CalendarConfig, alias: cc }
+                orderBy:
+                    - { column: cc.date, dir: asc }
+                join:
+                    left:
+                        - { join: cc.cycleDay, alias: cd }
+                        - { join: cc.bellSchedule, alias: bs }
+                        - { join: cc.typeOfDay, alias: tod }
+        inline_editing:
+            enable: true
+            save_api_accessor:
+                route: 'oro_rest_api_patch'
+        columns:
+            date:
+                label: elemen.calendar.config.date.label
+                type: twig
+                frontend_type: html
+                template: ElemenCalendarBundle:CalendarConfig/Datagrid/Property:config_date.html.twig
+            inSession:
+                label: elemen.calendar.config.in_session.label
+                frontend_type: select
+                choices: # required
+                  0: No
+                  1: Yes
+                inline_editing:
+                    enable: true
+                    save_api_accessor:
+                        default_route_parameters:
+                            entity: 'calendarconfigs'
+            cycleDay:
+                label: elemen.calendar.cycle_day.entity_label
+                frontend_type: relation
+                inline_editing:
+                    enable: true
+                    editor:
+                        view: oroform/js/app/views/editor/related-id-relation-editor-view
+                        view_options:
+                            value_field_name: cycleDayId
+                    autocomplete_api_accessor:
+                        class: oroentity/js/tools/entity-select-search-api-accessor
+                        entity_name: 'Elemen\Bundle\CalendarBundle\Entity\CycleDay'
+                        field_name: 'name'
+                    save_api_accessor:
+                        route: 'oro_rest_api_patch_relationship'
+                        default_route_parameters:
+                            entity: 'calendarconfigs'
+                            association: 'cycleDay'
+            bellSchedule:
+                label: elemen.calendar.bell_schedule.entity_label
+                frontend_type: relation
+                inline_editing:
+                    enable: true
+                    editor:
+                        view: oroform/js/app/views/editor/related-id-relation-editor-view
+                        view_options:
+                            value_field_name: bellScheduleId
+                    autocomplete_api_accessor:
+                        class: oroentity/js/tools/entity-select-search-api-accessor
+                        entity_name: 'Elemen\Bundle\CalendarBundle\Entity\BellSchedule'
+                        field_name: 'name'
+                    save_api_accessor:
+                        route: 'oro_rest_api_patch_relationship'
+                        default_route_parameters:
+                            entity: 'calendarconfigs'
+                            association: 'bellSchedule'
+            attendanceValue:
+                label: elemen.calendar.config.attendance_value.label
+                frontend_type: decimal
+                inline_editing:
+                    editor:
+                        view: oroform/js/app/views/editor/number-editor-view
+                    save_api_accessor:
+                        default_route_parameters:
+                            entity: 'calendarconfigs'
+            typeOfDay:
+                label: elemen.calendar.type_of_day.entity_label
+                frontend_type: relation
+                inline_editing:
+                    enable: true
+                    editor:
+                        view: oroform/js/app/views/editor/related-id-relation-editor-view
+                        view_options:
+                            value_field_name: typeOfDayId
+                    autocomplete_api_accessor:
+                        class: oroentity/js/tools/entity-select-search-api-accessor
+                        entity_name: 'Elemen\Bundle\CalendarBundle\Entity\TypeOfDay'
+                        field_name: 'name'
+                    save_api_accessor:
+                        route: 'oro_rest_api_patch_relationship'
+                        default_route_parameters:
+                            entity: 'calendarconfigs'
+                            association: 'typeOfDay'
+            note:
+                label: elemen.calendar.config.note.label
+                inline_editing:
+                    save_api_accessor:
+                        default_route_parameters:
+                            entity: 'calendarconfigs'
+        filters:
+            columns:
+                date:
+                    label: elemen.calendar.config.date.label
+                    type: date
+                    data_name: cc.date
+                inSession:
+                    label: elemen.calendar.config.in_session.label
+                    type: boolean
+                    data_name: cc.inSession
+                    priorityLabel:
+                cycleDay:
+                    label: elemen.calendar.cycle_day.entity_label
+                    type: entity
+                    data_name: cc.cycleDay
+                    options:
+                        lazy: false
+                        field_options:
+                            class: ElemenCalendarBundle:cycleDay
+                            property: name
+                            query_builder:  "@elemen_calendar.config.datagrid_helper->getCycleDayFilterQueryBuilder"
+                            translatable_options: false
+                bellSchedule:
+                    label: elemen.calendar.bell_schedule.entity_label
+                    type: entity
+                    data_name: cc.bellSchedule
+                    options:
+                        lazy: false
+                        field_options:
+                            class: ElemenCalendarBundle:BellSchedule
+                            property: name
+                            query_builder:  "@elemen_calendar.config.datagrid_helper->getBellScheduleFilterQueryBuilder"
+                            translatable_options: false
+                typeOfDay:
+                    label: elemen.calendar.type_of_day.entity_label
+                    type: entity
+                    data_name: cc.typeOfDay
+                    options:
+                        field_options:
+                            class: ElemenCalendarBundle:TypeOfDay
+                            property: name
+
+        properties:
+                id: ~
+                cycleDayId: ~
+                bellScheduleId: ~
+                typeOfDayId: ~
+
+        actions: ~

@@ -1,0 +1,10 @@
+placeholders:
+    placeholders:
+        breadcrumb_pin_after:
+            items:
+                system_calendar_context_switch:
+                    order: 100
+    items:
+        system_calendar_context_switch:
+            template: ElemenCalendarBundle:Placeholder:calendarContextSwitch.html.twig
+            applicable: "@oro_user.placeholder.filter->isUserApplicable()"

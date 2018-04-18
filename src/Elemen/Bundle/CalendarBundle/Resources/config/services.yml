@@ -1,0 +1,284 @@
+parameters:
+
+    oro_calendar.listener.entity_listener.class:     Elemen\Bundle\CalendarBundle\EventListener\EntityListener
+    oro_calendar.system_calendar.form.type.class:    Elemen\Bundle\CalendarBundle\Form\Type\SystemCalendarType
+    oro_calendar.system_calendar.form.handler.class: Elemen\Bundle\CalendarBundle\Form\Handler\SystemCalendarHandler
+
+    elemen_calendar.term.entity.class:             Elemen\Bundle\CalendarBundle\Entity\Term
+    elemen_calendar.system_calendar.manager.class: Elemen\Bundle\CalendarBundle\Entity\Manager\SystemCalendarManager
+    elemen_calendar.security.login.class:          Elemen\Bundle\CalendarBundle\EventListener\LoginSubscriber
+
+services:
+
+    # Managers
+    elemen_calendar.term.manager:
+        class: 'Elemen\Bundle\CalendarBundle\Entity\Manager\TermManager'
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
+    elemen_calendar.system_calendar_manager:
+        class: '%elemen_calendar.system_calendar.manager.class%'
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@elemen_security.token_accessor'
+            - '@oro_security.acl_helper'
+    elemen_calendar.config_manager:
+        class: 'Elemen\Bundle\CalendarBundle\Entity\Manager\CalendarConfigManager'
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@elemen_security.token_accessor'
+
+    # Form Factory
+    elemen_calendar.form.term:
+        class: Symfony\Component\Form\Form
+        factory: ['@form.factory', createNamed]
+        arguments: ["elemen_term_form", "elemen_term"]
+
+    elemen_calendar.form.period:
+        class: Symfony\Component\Form\Form
+        factory: ['@form.factory', createNamed]
+        arguments: ["elemen_period_form", "elemen_period"]
+
+    elemen_calendar.form.period_collection:
+        class: Symfony\Component\Form\Form
+        factory: ['@form.factory', createNamed]
+        arguments: ["elemen_period_collection_form", "elemen_period_collection"]
+
+    elemen_calendar.form.type_of_day_collection:
+        class: Symfony\Component\Form\Form
+        factory: ['@form.factory', createNamed]
+        arguments: ["elemen_type_of_day_collection_form", "elemen_type_of_day_collection"]
+
+    elemen_calendar.form.cycle_day:
+        class: Symfony\Component\Form\Form
+        factory: ['@form.factory', createNamed]
+        arguments: ["elemen_cycle_day_form", "elemen_cycle_day"]
+
+    elemen_calendar.form.cycle_day_collection:
+        class: Symfony\Component\Form\Form
+        factory: ['@form.factory', createNamed]
+        arguments: ["elemen_cycle_day_collection_form", "elemen_cycle_day_collection"]
+
+    elemen_calendar.form.bell_schedule:
+        class: Symfony\Component\Form\Form
+        factory: ['@form.factory', createNamed]
+        arguments: ["elemen_bell_schedule_form", "elemen_bell_schedule"]
+
+    # Form Types
+    elemen_calendar.form.type.term:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Type\TermType'
+        arguments:
+            - 'Elemen\Bundle\CalendarBundle\Entity\Term'
+        tags:
+            - { name: form.type, alias: elemen_term }
+
+    elemen_calendar.form.type.systemcalendar_select:
+       class: 'Elemen\Bundle\CalendarBundle\Form\Type\SystemCalendarSelectType'
+       tags:
+           - { name: form.type, alias: elemen_systemcalendar_select }
+
+    elemen_calendar.form.type.period:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Type\PeriodType'
+        tags:
+            - { name: form.type, alias: elemen_period }
+
+    elemen_calendar.form.type.period_colecction:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Type\PeriodCollectionType'
+        tags:
+            - { name: form.type, alias: elemen_period_collection }
+
+    elemen_calendar.form.type.type_of_day:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Type\TypeOfDayType'
+        tags:
+            - { name: form.type, alias: elemen_type_of_day }
+
+    elemen_calendar.form.type.type_of_day_colecction:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Type\TypeOfDayCollectionType'
+        tags:
+            - { name: form.type, alias: elemen_type_of_day_collection }
+
+    elemen_calendar.form.type.cycle_day:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Type\CycleDayType'
+        arguments:
+            - 'Elemen\Bundle\CalendarBundle\Entity\Period'
+        tags:
+            - { name: form.type, alias: elemen_cycle_day }
+
+    elemen_calendar.form.type.cycle_day_colecction:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Type\CycleDayCollectionType'
+        tags:
+            - { name: form.type, alias: elemen_cycle_day_collection }
+
+    elemen_calendar.form.type.bell_schedule:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Type\BellScheduleType'
+        arguments:
+            - 'Elemen\Bundle\CalendarBundle\Entity\BellSchedule'
+        tags:
+            - { name: form.type, alias: elemen_bell_schedule }
+    elemen_calendar.form.type.calendar_config:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Type\CalendarConfigType'
+        arguments:
+            - '@oro_calendar.model.recurrence'
+            - '@elemen_security.token_accessor'
+        tags:
+            - { name: form.type, alias: elemen_calendar_config }
+
+    elemen_calendar.form.type.timetable:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Type\TimetableType'
+        arguments:
+            - '@elemen_calendar.system_calendar_manager'
+        tags:
+            - { name: form.type, alias: elemen_timetable }
+
+    elemen_calendar.form.type.perdiod_day_choice:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Type\PeriodDayChoiceType'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: form.type, alias: elemen_period_day_choice }
+
+    # Handlers
+    oro_calendar.system_calendar.handler.delete:
+        class: Elemen\Bundle\CalendarBundle\Handler\SystemCalendarDeleteHandler
+        parent: oro_soap.handler.delete.abstract
+        calls:
+            - [setCalendarConfig, ['@oro_calendar.system_calendar_config']]
+            - [setAuthorizationChecker, ['@security.authorization_checker']]
+
+    elemen_calendar.term.handler.delete:
+        class: Elemen\Bundle\CalendarBundle\Handler\TermDeleteHandler
+        parent: oro_soap.handler.delete.abstract
+
+    elemen_calendar.bell_schedule.handler.delete:
+        class: Elemen\Bundle\CalendarBundle\Handler\BellScheduleDeleteHandler
+        parent: oro_soap.handler.delete.abstract
+
+    elemen_calendar.period.handler.delete:
+            class: Elemen\Bundle\CalendarBundle\Handler\PeriodDeleteHandler
+            parent: oro_soap.handler.delete.abstract
+
+    elemen_calendar.cycle_day.handler.delete:
+            class: Elemen\Bundle\CalendarBundle\Handler\CycleDayDeleteHandler
+            parent: oro_soap.handler.delete.abstract
+
+    elemen_calendar.type_of_day.handler.delete:
+            class: Elemen\Bundle\CalendarBundle\Handler\TypeOfDayDeleteHandler
+            parent: oro_soap.handler.delete.abstract
+
+    elemen_calendar.form.handler.term:
+        class: 'Elemen\Bundle\CoreBundle\Form\Handler\FormHandler'
+        arguments:
+            - "@elemen_calendar.term.manager"
+        tags:
+            - { name: oro_form.form.handler, alias: term_form_handler }
+
+    elemen_calendar.form.handler.perdiod_collection:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Handler\PeriodCollectionTypeHandler'
+        properties:
+            deleteHandler: '@elemen_calendar.period.handler.delete'
+        arguments:
+            - '@oro_form.event.event_dispatcher'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity.routing_helper'
+        tags:
+            - { name: oro_form.form.handler, alias: period_collection_form_handler }
+
+    elemen_calendar.form.handler.cycleday_collection:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Handler\CycleDayCollectionTypeHandler'
+        properties:
+            deleteHandler: '@elemen_calendar.cycle_day.handler.delete'
+        arguments:
+            - '@oro_form.event.event_dispatcher'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity.routing_helper'
+        tags:
+            - { name: oro_form.form.handler, alias: cycleday_collection_form_handler }
+
+    elemen_calendar.form.handler.type_of_day_collection:
+        class: 'Elemen\Bundle\CoreBundle\Form\Handler\FormCollectionHandler'
+        properties:
+            deleteHandler: '@elemen_calendar.type_of_day.handler.delete'
+        arguments:
+            - '@oro_form.event.event_dispatcher'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity.routing_helper'
+        tags:
+            - { name: oro_form.form.handler, alias: type_of_day_collection_form_handler }
+
+    elemen_calendar.form.handler.calendar_config:
+        class: 'Elemen\Bundle\CalendarBundle\Form\Handler\CalendarConfigFormHandler'
+        arguments:
+            - "@elemen_calendar.config_manager"
+        tags:
+            - { name: oro_form.form.handler, alias: calendar_config_form_handler }
+
+    elemen_calendar.form.autocomplete.systemcalendar.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - '%oro_calendar.system_calendar.entity.class%'
+            - ["name"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: system_calendar, acl_resource: oro_system_calendar_view }
+
+    # Other Services
+    elemen_calendar.security.login:
+        class:                        '%elemen_calendar.security.login.class%'
+        arguments:                    ["@elemen_calendar.system_calendar_manager"]
+        tags:
+            - { name: kernel.event_listener, event: security.interactive_login, method: onLogin }
+
+    elemen_calendar.security.filter:
+        class: Elemen\Bundle\CalendarBundle\EventListener\SystemCalendarFilterSubscriber
+        arguments: ["@elemen_calendar.system_calendar_manager"]
+        tags:
+            - { name: kernel.event_listener, event: oro_security.acl_helper.process_select.after, method: onSelectAfter }
+
+    elemen_calendar.config.datagrid_helper:
+        class: Elemen\Bundle\CalendarBundle\Datagrid\CalendarConfigDatagridHelper
+        arguments: ["@elemen_security.token_accessor"]
+
+    # Override Service Definition.
+    oro_calendar.listener.entity_listener:
+        class: Elemen\Bundle\CalendarBundle\EventListener\EntityListener
+        arguments:
+            - '@oro_security.token_accessor'
+            - '@oro_calendar.model.recurrence'
+        tags:
+            - { name: doctrine.event_listener, event: preUpdate }
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+
+    # Twig
+    elemen_calendar.twig.system_calendar:
+        class: Elemen\Bundle\CalendarBundle\Twig\SystemCalendarExtension
+        arguments:
+            - '@elemen_calendar.system_calendar_manager'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: twig.extension }
+
+    # SystemCalendar Form Extension
+    eleman_calendar.form.extension.system_calendar:
+        class: Elemen\Bundle\CalendarBundle\Form\Extension\SystemCalendarFormExtension
+        arguments:
+            - '@elemen_security.token_accessor'
+        tags:
+            - { name: form.type_extension, alias: form, extended_type: 'Symfony\Component\Form\Extension\Core\Type\FormType' }
+
+    elemen_calendar.datagrid.action_permission_provider:
+        class: Elemen\Bundle\CalendarBundle\Datagrid\ActionPermissionProvider
+        arguments:
+            - '@elemen_calendar.system_calendar_manager'
+
+    # System Calendar Context
+    elemen_calendar.acl.voter.system_calendar_access:
+        class: Elemen\Bundle\CalendarBundle\Acl\Voter\SystemCalendarPermissionVoter
+        public: false
+        tags:
+            - { name: security.voter }
+    # provider
+    elemen_calendar.year_division_provider:
+        class: Elemen\Bundle\CalendarBundle\Provider\YearDivisionProvider
+        arguments:
+            - '@translator'

@@ -1,0 +1,10 @@
+search:
+    Oro\Bundle\CalendarBundle\Entity\SystemCalendar:
+        alias:                          elemen_system_calendar
+        title_fields:                   [name]
+        search_template:                OroSearchBundle:Search:searchResultItem.html.twig
+        fields:
+            -
+                name:                   name
+                target_type:            text
+                target_fields:          [name]

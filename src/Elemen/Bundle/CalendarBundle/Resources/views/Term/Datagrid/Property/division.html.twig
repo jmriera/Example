@@ -1,0 +1,11 @@
+{% set division = record.getValue('division') %}
+
+{% if (division == constant('Elemen\\Bundle\\CalendarBundle\\Entity\\Term::DIVISION_FULL_YEAR')) %}
+    {{ 'elemen.calendar.term.division.enum.full_year'|trans }}
+{% elseif (division == constant('Elemen\\Bundle\\CalendarBundle\\Entity\\Term::DIVISION_SEMESTER')) %}
+    {{ 'elemen.calendar.term.division.enum.semester'|trans }}
+{% elseif (division == constant('Elemen\\Bundle\\CalendarBundle\\Entity\\Term::DIVISION_QUARTERS')) %}
+    {{ 'elemen.calendar.term.division.enum.quarter'|trans }}
+{% elseif (division == constant('Elemen\\Bundle\\CalendarBundle\\Entity\\Term::DIVISION_TRIMESTER')) %}
+    {{ 'elemen.calendar.term.division.enum.trimester'|trans }}
+{% endif %}

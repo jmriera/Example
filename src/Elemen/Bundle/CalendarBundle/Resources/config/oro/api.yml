@@ -1,0 +1,13 @@
+api:
+    entity_aliases:
+        Elemen\Bundle\CalendarBundle\Entity\BellSchedule:
+            alias: bellschedule
+            plural_alias: bellschedules
+    entities:
+        Elemen\Bundle\CalendarBundle\Entity\Term:
+            delete_handler: elemen_calendar.term.handler.delete
+        Elemen\Bundle\CalendarBundle\Entity\BellSchedule:
+            delete_handler: elemen_calendar.bell_schedule.handler.delete
+        Elemen\Bundle\CalendarBundle\Entity\CalendarConfig: ~
+        Elemen\Bundle\CalendarBundle\Entity\CycleDay: ~
+        Elemen\Bundle\CalendarBundle\Entity\TypeOfDay: ~

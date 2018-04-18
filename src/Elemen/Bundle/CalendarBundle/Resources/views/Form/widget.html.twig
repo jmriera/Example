@@ -1,0 +1,104 @@
+{% block elemen_type_of_day_widget %}
+    {% set name = form.vars.full_name %}
+    <tr data-content="{{ name }}" class="oro-multiselect-holder grid-row">
+        <td style="width: 10px;"> <label class="add-on ui-sortable-handle btn btn-link" data-name="sortable-handle" title="{{ 'oro.entity_extend.enum_options.priority.tooltip'|trans }}">
+                <i class="fa-arrows-v "></i>{{ form_widget(form.priority) }}
+            </label>
+        </td>
+        <td style="border-left:0;">{{ form_widget(form.name,{ 'attr': {'style': 'width: 100%;'}}) }}{{ form_errors(form.name) }}</td>
+        <td style="border-left:0;" >
+            {% if form.parent.vars.allow_delete %}
+                <button class="removeRow btn btn-action btn-link" style="float:inherit;" type="button" data-related="{{ name }}">×</button>
+            {% endif %}
+            <div class="hidden">
+                {{ form_rest(form) }}
+            </div>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block elemen_period_widget %}
+    {% set name = form.vars.full_name %}
+    <tr data-content="{{ name }}" class="oro-multiselect-holder grid-row">
+        <td style="width: 10px;"> <label class="add-on ui-sortable-handle btn btn-link" data-name="sortable-handle" title="{{ 'oro.entity_extend.enum_options.priority.tooltip'|trans }}">
+                <i class="fa-arrows-v "></i>{{ form_widget(form.priority) }}
+            </label>
+        </td>
+        <td style="border-left:0;">{{ form_widget(form.name,{ 'attr': {'style': 'width: 200px;'}}) }}{{ form_errors(form.name) }}</td>
+        <td style="border-left:0;">{{ form_widget(form.shortName,{ 'attr': {'style': 'width: 50px;'}}) }}{{ form_errors(form.shortName) }}</td>
+        <td style="border-left:0;" >
+            {% if form.parent.vars.allow_delete %}
+                <button class="removeRow btn btn-action btn-link" style="float:inherit;" type="button" data-related="{{ name }}">×</button>
+            {% endif %}
+            <div class="hidden">
+                {{ form_rest(form) }}
+            </div>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block elemen_cycle_day_widget %}
+    {% set name = form.vars.full_name %}
+    <tr data-content="{{ name }}" class="oro-multiselect-holder grid-row">
+        <td style="width: 10px;"> <label class="add-on ui-sortable-handle btn btn-link" data-name="sortable-handle" title="{{ 'oro.entity_extend.enum_options.priority.tooltip'|trans }}">
+                <i class="fa-arrows-v "></i>{{ form_widget(form.priority) }}
+            </label>
+        </td>
+        <td style="border-left:0;">{{ form_widget(form.name,{ 'attr': {'style': 'width: 200px;'}}) }}{{ form_errors(form.name) }}</td>
+        <td style="border-left:0;">{{ form_widget(form.shortName,{ 'attr': {'style': 'width: 50px;'}}) }}{{ form_errors(form.shortName) }}</td>
+        <td style="border-left:0;" >
+            {% if form.parent.vars.allow_delete %}
+                <button class="removeRow btn btn-action btn-link" style="float:inherit;" type="button" data-related="{{ name }}">×</button>
+            {% endif %}
+            <div class="hidden">
+                {{ form_rest(form) }}
+            </div>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block elemen_timetable_widget %}
+    {% if form.parent is not empty %}
+        <div {{ block('widget_container_attributes') }}>
+            {{ block('elemen_timetable_rows') }}
+        </div>
+    {% else %}
+        {{ block('elemen_timetable_rows') }}
+    {% endif %}
+{% endblock %}
+
+{% block elemen_timetable_rows %}
+<div  class="query-designer-form clearfix">
+    {{ form_row(form.period) }}
+    {{ form_row(form.startTime) }}
+    {{ form_row(form.endTime) }}
+    {{ form_rest(form) }}
+</div>
+{%  endblock %}
+
+{% block elemen_timetable_collection_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-address-collection' }) %}
+    {{ block('oro_collection_widget') }}
+    {% set id = id ~ '_collection' %}
+    {{ _self.elemen_timetable_collection_validate_js(_context) }}
+{% endblock %}
+
+{% macro elemen_timetable_collection_validate_js(context) %}
+    {% if context.form.vars.prototype.period is defined %}
+        <script type="text/javascript">
+            require(['jquery'],
+                function($){
+                    $(function() {
+                        var container = $('#{{ context.id }}');
+                        /**
+                         * Allow only 1 item with selected type
+                         */
+                        container.on('change', '[name$="[period]"]', function() {
+                            $(this).closest( ".controls" ).find('.validation-failed').remove();
+                        });
+                    });
+                });
+        </script>
+    {% endif %}
+{% endmacro %}
+

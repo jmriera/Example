@@ -1,0 +1,29 @@
+{% block elemen_period_day_choice_widget %}
+    {% set scheduleIdsArray = schedule_form_to_ids_array(form)  %}
+    {% set periods = get_periods()  %}
+    {% set days = get_days()  %}
+    <div class="row-oro">
+        <table class="grid table table-condensed table-bordered table-hover two-axis-table">
+            <thead>
+                <tr>
+                   <th></th>
+                   {% for day in days %}
+                   <th>{{ day.shortName }}</th>
+                   {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for period in periods %}
+                <tr class="grid-row">
+                    <td>{{ period.shortName}}</td>
+                    {% for day in days %}
+                        {% set key = period.id ~ ';' ~ day.id %}
+                        <td style="border-left:0;">{{ form_widget(scheduleIdsArray[key]) }} {{ form_errors(scheduleIdsArray[key]) }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {{ form_rest(form) }}
+    </div>
+{% endblock %}

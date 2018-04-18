@@ -1,0 +1,44 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set pageTitle = 'elemen.calendar.cycle_day.entity_plural_label'|trans %}
+{% set gridName = 'calendar-config-grid' %}
+{% set renderParams = {cssClass: 'inner-calendar-config-grid', themeOptions: {actionsHideCount: 5}} %}
+{% block navButtons %}
+        <div class="btn-group">
+            {{ UI.clientButton({
+                'dataUrl': path('elemen_calendar_config_update'),
+                'aCss': 'no-hash',
+                'iCss': 'fa-cog',
+                'label' : 'elemen.calendar.config.action.config.label'|trans,
+                'widget' : {
+                    'type' : 'dialog',
+                    'multiple' : false,
+                    'reload-grid-name' : 'calendar-config-grid',
+                    'options' : {
+                        'alias': 'calendar-config-dialog',
+                        'dialogOptions' : {
+                            'title' : 'elemen.calendar.config.action.config.label'|trans,
+                            'allowMaximize': false,
+                            'allowMinimize': false,
+                            'modal': true,
+                            'dblclick': 'maximize',
+                            'maximizedHeightDecreaseBy': 'minimize-bar',
+                            'width': 990
+                        }
+                    }
+                },
+            }) }}
+        </div>
+{% endblock navButtons %}
+{% block content_datagrid %}
+    <style>
+        .inner-calendar-config-grid .grid-header-cell:first-child {
+            width: 250px;
+        }
+        .inner-calendar-config-grid .grid-header-cell:nth-child(2) {
+            width: 100px;
+        }
+    </style>
+    {{ parent() }}
+{% endblock %}

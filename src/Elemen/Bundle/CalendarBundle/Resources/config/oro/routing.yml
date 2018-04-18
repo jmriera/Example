@@ -1,0 +1,55 @@
+oro_calendar:
+    resource:     "@!OroCalendarBundle/Controller"
+    type:         annotation
+    prefix:       /calendar
+
+oro_sytem_calendar:
+    resource:     "@ElemenCalendarBundle/Controller/SystemCalendarController.php"
+    type:         annotation
+    prefix:       /system-calendar
+
+oro_sytem_calendar_event:
+    resource:     "@!OroCalendarBundle/Controller/SystemCalendarEventController.php"
+    type:         annotation
+    prefix:       /system-calendar
+
+oro_calendar_dashboard:
+    resource:     "@!OroCalendarBundle/Controller/Dashboard"
+    type:         annotation
+    prefix:       /dashboard
+
+oro_calendar_api:
+    resource: "@!OroCalendarBundle/Resources/config/oro/routing_api.yml"
+    type: rest
+    prefix: api/rest/{version}
+    requirements:
+        version:  latest|v1
+        _format: json
+    defaults:
+        version:  latest
+
+elemen_sytem_calendar_term:
+    resource:     "@ElemenCalendarBundle/Controller/TermController.php"
+    type:         annotation
+    prefix:       /system-calendar/term
+
+elemen_sytem_calendar_period:
+    resource:     "@ElemenCalendarBundle/Controller/PeriodController.php"
+    type:         annotation
+    prefix:       /system-calendar/period
+
+elemen_sytem_calendar_days:
+    resource:     "@ElemenCalendarBundle/Controller/CycleDaysController.php"
+    type:         annotation
+    prefix:       /system-calendar/days
+
+elemen_sytem_calendar_bell_schedule:
+    resource:     "@ElemenCalendarBundle/Controller/BellScheduleController.php"
+    type:         annotation
+    prefix:       /system-calendar/bell-schedule
+
+elemen_sytem_calendar_config:
+    resource:     "@ElemenCalendarBundle/Controller/CalendarConfigController.php"
+    type:         annotation
+    prefix:       /calendar-config
+

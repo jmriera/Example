@@ -1,0 +1,15 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set gridName = 'bell-schedule-grid' %}
+{% set pageTitle = 'elemen.calendar.bell_schedule.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('elemen_bell_schedule_create') %}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path' : path('elemen_bell_schedule_create'),
+                'entity_label': 'elemen.calendar.bell_schedule.entity_plural_label'|trans,
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}

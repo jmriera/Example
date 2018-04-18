@@ -1,0 +1,240 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+
+{% oro_title_set({params : {"%entity.title%": entity.name ~ " | " ~ entity.type.name  }}) %}
+{% block navButtons %}
+    {% if canAddEvent %}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path' : path('oro_system_calendar_event_create', {'id': entity.id }),
+                'entity_label': 'oro.calendar.calendarevent.entity_label'|trans
+            }) }}
+        </div>
+    {% endif %}
+    {% if editable %}
+        {{ UI.editButton({
+            'path' :        path('oro_system_calendar_update', { id: entity.id }),
+            'entity_label': 'oro.calendar.systemcalendar.entity_label'|trans
+        }) }}
+    {% endif %}
+    {% if removable and not (entity.type.id == 'current') %}
+        {{ UI.deleteButton({
+            'dataUrl':      path('oro_api_delete_systemcalendar', {'id': entity.id}),
+            'dataRedirect': path('oro_system_calendar_index'),
+            'aCss':         'no-hash remove-button',
+            'dataId':       entity.id,
+            'entity_label': 'oro.calendar.systemcalendar.entity_label'|trans
+        }) }}
+    {% endif %}
+
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity':      entity,
+        'indexPath':   path('oro_system_calendar_index'),
+        'indexLabel':  'oro.calendar.systemcalendar.entity_plural_label'|trans,
+        'entityTitle': entity.name,
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+{% block breadcrumbs %}
+    {{ parent() }}
+    <div class="pull-left">
+        {% if entity.type.id == 'current' %}
+            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled fa-circle"></i>{{ 'elemen.calendar.system.type.current.label'|trans }}</div>
+        {% elseif entity.type.id == 'planning' %}
+            <div class="badge badge-disabled status-tentatively"><i class="icon-status-enabled fa-circle"></i>{{ 'elemen.calendar.system.type.planning.label'|trans  }}</div>
+        {% elseif entity.type.id == 'historical' %}
+            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled fa-circle"></i>{{ 'elemen.calendar.system.type.historical.label'|trans  }}</div>
+        {% endif %}
+        {% if entity.id == get_system_calendar_context_id() %}
+        <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled fa-check"></i>{{ 'Active'|trans  }}</div>
+        {% endif %}
+    </div>
+{% endblock breadcrumbs %}
+{% block content_data %}
+    {% set systemCalendarInformation %}
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ UI.renderProperty('oro.calendar.systemcalendar.name.label'|trans, entity.name) }}
+                {{ UI.renderColorProperty(
+                    'oro.calendar.systemcalendar.background_color.label'|trans,
+                    entity.backgroundColor,
+                    'oro.calendar.systemcalendar.no_color'|trans) }}
+                {{ UI.renderProperty('elemen.calendar.school_calendar.startDate.label'|trans, entity.startDate|oro_format_date({'timeZone': 'UTC' }) ) }}
+                {{ UI.renderProperty('elemen.calendar.school_calendar.endDate.label'|trans, entity.endDate|oro_format_date({'timeZone': 'UTC' }) ) }}
+
+                {% if showScope %}
+                    {{ UI.renderProperty('oro.calendar.systemcalendar.public.label'|trans, entity.public
+                        ? 'oro.calendar.systemcalendar.scope.system'|trans
+                        : 'oro.calendar.systemcalendar.scope.organization'|trans) }}
+                {% endif %}
+            </div>
+            <div class="responsive-block">
+                {% set periodsLink %}
+                {{ UI.clientLink({
+                    'dataUrl': path('elemen_period_collection_update',{
+                        entityClass: oro_class_name(entity, true),
+                        entityId: entity.id
+                    }),
+                    'aCss': 'no-hash',
+                    'label' : 'Edit'|trans,
+                    'widget' : {
+                        'type' : 'dialog',
+                        'multiple' : false,
+                        'refresh-widget-alias': 'period-property-view-widget',
+                        'reload-widget-alias': 'period-property-view-widget',
+                        'options' : {
+                            'reload-widget-alias': 'period-property-view-widget',
+                            'refresh-widget-alias': 'period-property-view-widget',
+                            'alias': 'period-dialog',
+                            'dialogOptions' : {
+                                'title' : 'elemen.calendar.period.entity_plural_label'|trans,
+                                'allowMaximize': false,
+                                'allowMinimize': false,
+                                'modal': true,
+                                'dblclick': 'maximize',
+                                'maximizedHeightDecreaseBy': 'minimize-bar',
+                                'width': 550
+                            }
+                        }
+                    },
+                }) }}
+                {%  endset %}
+                {% set cycleDaysLink %}
+                {{ UI.clientLink({
+                    'dataUrl': path('elemen_cycle_days_update',{
+                        entityClass: oro_class_name(entity, true),
+                        entityId: entity.id
+                    }),
+                    'aCss': 'no-hash',
+                    'label' : 'Edit'|trans,
+                    'widget' : {
+                        'type' : 'dialog',
+                        'multiple' : false,
+                        'options' : {
+                            'alias': 'period-dialog',
+                            'dialogOptions' : {
+                                'title' : 'elemen.calendar.cycle_day.entity_plural_label'|trans,
+                                'allowMaximize': false,
+                                'allowMinimize': false,
+                                'modal': true,
+                                'dblclick': 'maximize',
+                                'maximizedHeightDecreaseBy': 'minimize-bar',
+                                'width': 550
+                            }
+                        }
+                    },
+                }) }}
+                {% endset %}
+                {% set typeOfDayLink %}
+                {{ UI.clientLink({
+                    'dataUrl': path('elemen_type_of_days_collection_update'),
+                    'aCss': 'no-hash',
+                    'label' : 'Edit'|trans,
+                    'widget' : {
+                        'type' : 'dialog',
+                        'multiple' : false,
+                        'options' : {
+                            'dialogOptions' : {
+                                'title' : 'elemen.calendar.type_of_day.entity_plural_label'|trans,
+                                'allowMaximize': false,
+                                'allowMinimize': false,
+                                'modal': true,
+                                'dblclick': 'maximize',
+                                'maximizedHeightDecreaseBy': 'minimize-bar',
+                                'width': 550
+                            }
+                        }
+                    },
+                }) }}
+                {% endset %}
+
+                {{ UI.renderHtmlProperty('elemen.calendar.period.entity_plural_label'|trans, periodsLink,null,null,'elemen.calendar.period.entity_description'|trans) }}
+                {{ UI.renderHtmlProperty('elemen.calendar.cycle_day.entity_plural_label'|trans,  cycleDaysLink,null,null,'elemen.calendar.cycle_day.entity_description'|trans) }}
+                {{ UI.renderHtmlProperty('elemen.calendar.type_of_day.entity_plural_label'|trans, typeOfDayLink,null,null,'elemen.calendar.type_of_day.entity_description'|trans) }}
+
+                {{ entityConfig.renderDynamicFields(entity) }}
+
+
+            </div>
+        </div>
+
+    {% endset %}
+
+    {% set dataBlocks = [{
+        'title': 'General Information'|trans,
+        'class': 'active',
+        'subblocks': [
+            {'data' : [systemCalendarInformation]}
+        ]
+    }] %}
+    {% set updatePeriodButton %}
+
+    {% endset %}
+
+    {% set params = {'systemCalendarId': entity.id } %}
+    {% set gridTerms %}
+        <div class="row-oro">
+            {{ dataGrid.renderGrid('system-calendar-terms-grid', params) }}
+            <div style="margin-left: 20px">
+            {{ UI.clientButton({
+                'dataUrl': path('elemen_term_create',{
+                    entityClass: oro_class_name(entity, true),
+                    entityId: entity.id
+                }),
+                'aCss': 'no-hash',
+                'iCss': 'icon-plus',
+                'dataId': entity.id,
+                'label' : 'elemen.calendar.term.action.add.label'|trans,
+                'widget' : {
+                    'type' : 'dialog',
+                    'multiple' : false,
+                    'reload-grid-name' : 'system-calendar-terms-grid',
+                    'options' : {
+                        'alias': 'term-dialog',
+                        'dialogOptions' : {
+                            'title' : 'Create New'|trans,
+                            'allowMaximize': false,
+                            'allowMinimize': false,
+                            'modal': true,
+                            'dblclick': 'maximize',
+                            'maximizedHeightDecreaseBy': 'minimize-bar',
+                            'width': 550
+                        }
+                    }
+                },
+            }) }}
+            </div>
+        </div>
+    {% endset %}
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title': 'elemen.calendar.term.entity_plural_label'|trans,
+            'subblocks': [
+                {'data' : [gridTerms ] }
+            ]
+        }
+    ]) %}
+    {% set systemCalendarEventsWidget %}
+    {{ oro_widget_render({
+        'widgetType':   'block',
+        'url':          path('oro_system_calendar_widget_events', {id: entity.id})
+    }) }}
+    {% endset %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.calendar.calendarevent.entity_plural_label'|trans,
+        'subblocks': [
+            {'data' : [systemCalendarEventsWidget]}
+        ]
+    }]) %}
+
+    {% set id = 'systemCalendarView' %}
+    {% set data = { 'dataBlocks': dataBlocks } %}
+
+    {{ parent() }}
+{% endblock content_data %}

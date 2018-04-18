@@ -1,0 +1,32 @@
+<div class="widget-content">
+    {% if switch is defined %}
+        <script type="text/javascript">
+            require(['underscore', 'orotranslation/js/translator', 'oroui/js/widget-manager', 'oroui/js/messenger', 'oroui/js/mediator','jquery'],
+                function(_, __, widgetManager, messenger, mediator,$) {
+                    widgetManager.getWidgetInstance({{ app.request.get('_wid')|json_encode|raw }}, function(widget) {
+                        messenger.notificationFlashMessage('success', __('{{ 'elemen.calendar.system.action.selected'|trans }}'));
+                        widget.remove();
+
+                    });
+
+                });
+            window.location.reload(false);
+        </script>
+    {% else %}
+        {% set formAction = app.request.uri %}
+        <div class="form-container">
+            <form id="switch-calendar" name="switch-calendar" action="{{ formAction }}&_switch=true" method="post">
+                <div class="alert" style="background-image: none;padding: 12px;">
+                    <div class="message">
+                        <p>.</p>
+                    </div>
+                </div>
+                <div class="widget-actions form-actions" style="display: none;">
+                    <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+                    <button class="btn btn-success" type="submit">{{ 'elemen.calendar.system.action.switch_working_calendar'|trans }}</button>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+</div>
+

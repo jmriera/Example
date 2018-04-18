@@ -1,0 +1,28 @@
+navigation:
+    menu_config:
+        items:
+            bell_schedule_list:
+                label: 'elemen.calendar.bell_schedule.entity_plural_label'
+                route: 'elemen_bell_schedule_index'
+                position: 98
+                extras:
+                    routes: ['elemen_bell_schedule_*']
+            oro_system_calendar_list:
+                label: 'oro.calendar.systemcalendar.entity_plural_label'
+                route: 'oro_system_calendar_index'
+                position: 95
+                extras:
+                    routes: ['oro_system_calendar_*']
+            calendar_config:
+                label: 'Configurar Calendario'
+                route: 'elemen_calendar_config_index'
+                position: 100
+
+        tree:
+            application_menu:
+                children:
+                    school_tab:
+                        children:
+                            oro_system_calendar_list: ~
+                            bell_schedule_list: ~
+                            calendar_config: ~

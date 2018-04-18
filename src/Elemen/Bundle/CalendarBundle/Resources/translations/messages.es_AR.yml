@@ -1,0 +1,151 @@
+current: En curso
+planning: Planeación
+historical: Hstórico
+elemen.calendar:
+    system:
+        action:
+            select_calendar: Trabajar con este calendario
+            selected: Nuevo calendario de trabajo seleccionado.
+            switch_working_calendar: Cambiar el calendario de trabajo
+
+        type:
+            current.label: En curso
+            planning.label: Planeación
+            historical.label: Hstórico
+        working_calendar.label: Calendario de Trabajo
+        number_days:
+            label: Número de días a planificar
+            description: Cantidad de días disponibles para la planificacion del año académico.
+        number_periods:
+            label: Número de periodos
+            description: Número de periodos disponibles para la planificacion del año académico.
+    term:
+        action:
+            add.label: Añadir Período
+            edit.label: Editar Período
+        entity_label: Período
+        entity_plural_label: Períodos
+        form:
+            choose_calendar:
+                label: Calendario escolar
+                description: Seleccione el Calendario Escolar al que pertenece el período.
+                placeholder: Seleccione un Calendario
+        name:
+            label: Nombre
+            description: Ingrese un nombre descriptivo por ej, "Semestre 1", "Semestre 2" etc.
+        short_name:
+            label: Abreviatura
+            description: Nombre corto max 2 caracteres por ej, "S1" para Semestre 1, "T2" para "Trimestre 2". Se recomienda no usar números como primer caracter.
+        first_day:
+            label: Primer día
+            description: Primer dia de inicio del período.
+        last_day:
+            label: Último día
+            description: Último día del período.
+        division:
+            label: Division del período
+            description: Seleccione la porción del año escolar que representa este período.
+            enum:
+                full_year:  Anual
+                semester:   Semestre
+                quarter:    Cuatrimestre
+                trimester:  Trimestre
+    period:
+        entity_label: Hora Cátedra
+        entity_plural_label: Horas Cátedra
+        entity_description: 'Las Horas Cátedras representan las porciones en la que se divide el día y se programan clases. "Hora 1", "Hora 2", son ejemplo de horas cátedra.'
+        action:
+            add.label:  'Añadir Hora Cátedra'
+            edit.label: 'Editar Horas Cátedras'
+        name:
+            label: Nombre
+            description:
+        short_name:
+            label: Abreviatura
+            description:
+        priority:
+            label: Orden
+            description: Número de Orden.
+    cycle_day:
+        entity_label: Día
+        entity_plural_label: Ciclos de Días
+        entity_description: Un dia o ciclo es el número de repeticiones de un grupo de clases que se dictan durante un día.
+        action:
+            edit.label: Editar Ciclos de días
+        name:
+            label: Nombre
+            description:
+        short_name:
+            label: Abreviatura
+            description:
+        priority:
+            label: Orden
+            description: Número de Orden.
+    type_of_day:
+        entity_label: Tipo de día
+        entity_plural_label: Tipos de días
+        entity_description: Etiquete los tipos de días de su calendario, por ej. "Feriado", "Clases","Receso escolar", etc.
+        action:
+            edit.label: Editar tipos de días
+        name:
+            label: Nombre
+            description:
+        priority:
+            label: Orden
+            description: Número de Orden.
+
+    bell_schedule:
+        entity_label: Horario de Clase
+        entity_plural_label: Horarios de Clases
+        entity_description: Horas de Clase
+        action:
+            add.label:  Añadir Horario de Clase
+            edit.label: Editar Horario de Clase
+        name:
+            label: Nombre
+            description: Asigne un nombre al grupo de horas de clase.
+        timetables:
+            label: Horarios
+            description: Horarios de Inicio y fin de clases por Hora Cátedra.
+
+    timetable:
+        entity_label: Horario
+        entity_plural_label: Horarios
+        entity_description: Horas de Clase
+        action:
+            add.label:  Añadir Horario
+            edit.label: Editar Horario
+        start_time:
+            label: Inicio
+            description: Hora de inicio de la hora cátedra.
+        end_time:
+            label: Fin
+            description: Horario de finalización de la hora cátedra
+
+    config:
+        entity_label: Configuración de Calendario
+        entity_description: Configuración del Calendario
+        action:
+            config.label:  Configurar Calendario
+        form.range: Rango de Aplicación
+        start_date:
+            label: Desde
+            description: Modificar configuración del Calendario desde la fecha.
+        end_date:
+            label: Hasta
+            description: Modificar configuración del calendario hasta la fecha.
+        day_of_week:
+            label: Días
+            description: Seleccione los días de la semana a los que desea aplicar los cambios.
+        date:
+            label: Fecha
+            description: Fecha
+        in_session:
+            label: En Clases
+            description: Notas
+        attendance_value:
+            label: Valor de Asistencia
+            description: Valor númerico de asistencia para la fecha.
+        note:
+            label: Notas
+            description: Notas

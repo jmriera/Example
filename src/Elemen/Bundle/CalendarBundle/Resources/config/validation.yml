@@ -1,0 +1,25 @@
+Oro\Bundle\CalendarBundle\Entity\SystemCalendar:
+    properties:
+        start_date:
+            - NotBlank:     ~
+        end_date:
+            - NotBlank:     ~
+
+Elemen\Bundle\CalendarBundle\Entity\Term:
+    properties:
+        name:
+            - NotBlank:     ~
+            - Length:
+                max:        100
+        shortName:
+            - NotBlank:     ~
+            - Length:
+                max:        2
+        firstDay:
+            - NotBlank:     ~
+            - Oro\Bundle\CalendarBundle\Validator\Constraints\DateEarlierThan: lastDay
+            - Elemen\Bundle\CalendarBundle\Validator\Constraints\TermFirstDateLater: ~
+        lastDay:
+            - NotBlank:     ~
+            - Elemen\Bundle\CalendarBundle\Validator\Constraints\TermLastDateEarlier: ~
+

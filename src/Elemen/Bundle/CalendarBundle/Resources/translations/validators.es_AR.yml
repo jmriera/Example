@@ -1,0 +1,2 @@
+elemen.calendar.term.validation.first_day_later: Esta fecha debe ser despúes del primer día ({{date}}) del año escolar.
+elemen.calendar.term.validation.first_date_earlier: Esta fecha debe ser antes del ultima día ({{lastDay}}) del año escolar.

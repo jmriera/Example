@@ -1,0 +1,9 @@
+{% set calendarName = record.getValue('name') %}
+{% set calendarId = record.getValue('id') %}
+{% if (calendarId == get_system_calendar_context_id()) %}
+    {{ calendarName }}
+    <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled fa-check"></i>{{ 'Active'|trans  }}</div>
+{% else %}
+    {{ calendarName }}
+{% endif %}
+

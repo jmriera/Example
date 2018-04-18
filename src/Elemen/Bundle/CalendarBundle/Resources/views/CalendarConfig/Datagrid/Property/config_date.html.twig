@@ -1,0 +1,5 @@
+{% if  record.getValue('date')|date('D','UTC') == 'Mon' %}
+     <b>{{ record.getValue('date')|oro_format_date({'dateType': 0 })|capitalize }}</b>
+{% else %}
+    {{ record.getValue('date')|oro_format_date({'dateType': 0 })|capitalize }}
+{% endif %}

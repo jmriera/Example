@@ -1,0 +1,58 @@
+<div class="widget-content">
+    {% if saved is defined %}
+        <script type="text/javascript">
+            require(['underscore', 'orotranslation/js/translator', 'oroui/js/widget-manager', 'oroui/js/messenger', 'oroui/js/mediator','jquery'],
+                function(_, __, widgetManager, messenger, mediator,$) {
+                    widgetManager.getWidgetInstance({{ app.request.get('_wid')|json_encode|raw }}, function(widget) {
+                        messenger.notificationFlashMessage('success', __('{{ 'elemen.core.controller.entity.saved.message'|trans }}'));
+                        mediator.trigger('widget_success:' + widget.getWid());
+                        mediator.trigger('widget_success:' + widget.getAlias());
+                        widget.remove();
+                    });
+
+                });
+        </script>
+    {% else %}
+        {% form_theme form with ['@ElemenCalendar/Form/widget.html.twig','ElemenCoreBundle:Form:fields.html.twig'] %}
+        {% set formAction = app.request.uri %}
+        <div class="form-container">
+            <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ formAction }}" method="post">
+                <fieldset class="form form-horizontal">
+                    <div class="span6">
+                        {{ form_row(form.inSession) }}
+                        {{ form_row(form.cycleDay) }}
+                        {{ form_row(form.bellSchedule) }}
+                        {{ form_row(form.attendanceValue) }}
+                        {{ form_row(form.typeOfDay) }}
+                        {{ form_row(form.note) }}
+                    </div>
+                    <div class="span6">
+                        <h5 class="user-fieldset">
+                            <span>{{ 'elemen.calendar.config.form.range'|trans }}</span>
+                        </h5>
+                        {{ form_row(form.startDate) }}
+                        {{ form_row(form.endDate) }}
+                        <div class="control-group">
+                            <div class="control-label wrap">
+                                {{ form_label(form.dayOfWeek) }}
+                            </div>
+                            <div class="controls">
+                                {{ form_widget(form.dayOfWeek) }}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="hidden">
+                        {{ form_rest(form) }}
+                    </div>
+                </fieldset>
+                <div class="widget-actions form-actions" style="display: none;">
+                    <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+                    <button class="btn btn-primary" type="submit">{{ 'Save'|trans }}</button>
+                </div>
+            </form>
+            {{ oro_form_js_validation(form) }}
+        </div>
+    {% endif %}
+</div>
+
